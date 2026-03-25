@@ -44,6 +44,14 @@ let currentCategory = "All";
 let searchTerm = "";
 const cuteItems = ['🎀', '🖤', '💜', '💖', '🦇', '💀', '🌙', '✨'];
 
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+    if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) {
+        e.preventDefault();
+        return false;
+    }
+});
+
 const themeToggle = document.getElementById('theme-toggle');
 themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('dark');
@@ -85,7 +93,7 @@ let mascotTimeout;
 function makeMascotTalk() {
     const container = document.getElementById('mascot');
     const speech = document.getElementById('speech');
-    const texts = ["พ่อมึงตาย", "แม่มึงตาย", "ไอหน้าหี", "อีจังไร", "ไปตาย"];
+    const texts = ["พ่อมึงตาย", "แม่มึงตาย", "ไอหน้าหี", "อีจังไร", "ไอขยะ"];
     speech.innerText = texts[Math.floor(Math.random() * texts.length)];
     container.classList.add('talk');
     clearTimeout(mascotTimeout);
