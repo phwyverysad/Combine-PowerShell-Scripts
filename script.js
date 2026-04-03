@@ -368,16 +368,98 @@ if (sidebar) {
     });
 }
 
-// Sticky Header Scroll Effect
+// Sticky Header Scroll Effect & iOS Pull Tab
 const mainContentScroller = document.querySelector('.main-content');
 const mainHeader = document.getElementById('header');
+const iosPullTab = document.getElementById('ios-pull-tab');
+let lastScrollTop = 0;
 
 if (mainContentScroller && mainHeader) {
     mainContentScroller.addEventListener('scroll', () => {
-        if (mainContentScroller.scrollTop > 30) {
+        const st = mainContentScroller.scrollTop;
+        if (st > 30) {
             mainHeader.classList.add('scrolled');
         } else {
             mainHeader.classList.remove('scrolled');
         }
+
+        // Scroll direction logic for Dynamic Island notch
+        if (st > 100) {
+            if (st > lastScrollTop) {
+                // Scrolling down
+                mainHeader.classList.add('hide-up');
+                if (iosPullTab) iosPullTab.classList.add('show');
+            } else {
+                // Scrolling up
+                mainHeader.classList.remove('hide-up');
+                if (iosPullTab) iosPullTab.classList.remove('show');
+            }
+        } else {
+            mainHeader.classList.remove('hide-up');
+            if (iosPullTab) iosPullTab.classList.remove('show');
+        }
+        
+        lastScrollTop = st;
     });
+}
+
+// Bring back header if they hover/click the notch
+if (iosPullTab && mainHeader) {
+    const showHeader = () => {
+        mainHeader.classList.remove('hide-up');
+        iosPullTab.classList.remove('show');
+    };
+    iosPullTab.addEventListener('mouseenter', showHeader);
+    iosPullTab.addEventListener('click', showHeader);
+}
+
+// Double-click on header to toggle hide
+if (mainHeader) {
+    mainHeader.addEventListener('dblclick', (e) => {
+        // Avoid triggering when clicking on inputs or buttons
+        if (e.target.closest('input, button, a, .search-box, .action-dock')) return;
+        const isHidden = mainHeader.classList.contains('hide-up');
+        if (isHidden) {
+            mainHeader.classList.remove('hide-up');
+            if (iosPullTab) iosPullTab.classList.remove('show');
+        } else {
+            mainHeader.classList.add('hide-up');
+            if (iosPullTab) iosPullTab.classList.add('show');
+        }
+    });
+}
+
+// Manual Touch Swipe Logic
+let touchStartY = 0;
+
+if (mainHeader) {
+    mainHeader.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+    }, {passive: true});
+    
+    mainHeader.addEventListener('touchmove', (e) => {
+        const touchEndY = e.touches[0].clientY;
+        const diff = touchStartY - touchEndY;
+        // If swiped up more than 30px
+        if (diff > 30) {
+            mainHeader.classList.add('hide-up');
+            if (iosPullTab) iosPullTab.classList.add('show');
+        }
+    }, {passive: true});
+}
+
+if (iosPullTab) {
+    iosPullTab.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+    }, {passive: true});
+    
+    iosPullTab.addEventListener('touchmove', (e) => {
+        const touchEndY = e.touches[0].clientY;
+        const diff = touchEndY - touchStartY;
+        // If swiped down more than 20px
+        if (diff > 20) {
+            mainHeader.classList.remove('hide-up');
+            iosPullTab.classList.remove('show');
+        }
+    }, {passive: true});
 }
