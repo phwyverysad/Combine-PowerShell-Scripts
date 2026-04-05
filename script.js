@@ -268,9 +268,8 @@ function renderCards() {
                 <div class="card-icon"><i class="ph ${item.icon}"></i></div>
                 <div class="card-title">${item.name}</div>
             </div>
-            <div class="code-box" id="code-${item.id}">${item.cmd}</div>
-            <button class="copy-btn" onclick="copyToClipboard('${item.cmd}', this, 'code-${item.id}')">
-                <i class="ph ph-copy"></i> <span>คัดลอกคำสั่ง</span>
+            <button class="run-btn" ${!window.appIsOnline ? 'disabled' : ''} onclick="runScriptItem('${item.cmd}', this)">
+                <i class="ph-fill ph-play"></i> <span>รัน</span>
             </button>`;
             
         let hoverRaf;
@@ -304,31 +303,133 @@ function renderCards() {
     });
 }
 
-function copyToClipboard(text, btnElement, codeBoxId) {
-    navigator.clipboard.writeText(text).then(() => {
-        const codeBox = document.getElementById(codeBoxId); 
-        const originalHtml = btnElement.innerHTML;
-        
-        codeBox.classList.remove('flash'); 
-        void codeBox.offsetWidth; 
-        codeBox.classList.add('flash');
-        
-        btnElement.innerHTML = `<i class="ph-bold ph-check"></i> <span>คัดลอกแล้ว</span>`;
-        btnElement.style.background = 'var(--text-main)'; 
-        btnElement.style.color = 'var(--bg-base)';
+// Global App state
+window.appIsOnline = false;
+
+function checkAppStatus() {
+    fetch('http://127.0.0.1:9999/ping')
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                if (!window.appIsOnline) {
+                    window.appIsOnline = true;
+                    updateBannerStatus(true);
+                    updateRunButtons(true);
+                }
+            }
+        })
+        .catch(err => {
+            if (window.appIsOnline) {
+                window.appIsOnline = false;
+                updateBannerStatus(false);
+                updateRunButtons(false);
+            }
+            // Try to auto start once if not online yet
+            if(!window.attemptedStart) {
+                window.attemptedStart = true;
+                const frame = document.getElementById('start-app-frame');
+                if(frame) frame.src = 'combineps://start';
+            }
+        });
+}
+
+function updateBannerStatus(isOnline) {
+    const banner = document.getElementById('app-status-banner');
+    const title = document.getElementById('status-title');
+    const desc = document.getElementById('status-desc');
+    const installBtn = document.getElementById('install-btn');
+    
+    if(!banner) return;
+    
+    if (isOnline) {
+        banner.classList.remove('offline');
+        banner.classList.add('online');
+        title.innerText = 'เชื่อมต่อระบบ Local App สำเร็จ \uD83D\uDFE2';
+        desc.innerText = 'ตอนนี้คุณสามารถกดปุ่ม "รัน" เพื่อใช้งานสคริปต์ได้ทันที';
+        installBtn.style.display = 'none';
         
         const toast = document.getElementById('toast'); 
-        toast.classList.add('show');
-        
+        if(toast) toast.classList.remove('show');
+    } else {
+        banner.classList.remove('online');
+        banner.classList.add('offline');
+        title.innerText = 'ระบบยังไม่ได้ติดตั้ง Local App';
+        desc.innerText = 'เพื่อให้ปุ่ม "รัน" ใช้งานได้ กรุณาติดตั้งระบบหลังบ้านก่อน';
+        installBtn.style.display = 'flex';
+    }
+}
+
+function updateRunButtons(isOnline) {
+    const btns = document.querySelectorAll('.run-btn');
+    btns.forEach(btn => {
+        btn.disabled = !isOnline;
+    });
+}
+
+// Start checking every 3 seconds
+setInterval(checkAppStatus, 3000);
+// Check immediately on load
+checkAppStatus();
+
+function copyInstallCmd() {
+    const cmd = "irm https://raw.githubusercontent.com/phwyverysad/Combine-PowerShell-Scripts/refs/heads/main/download.ps1 | iex";
+    navigator.clipboard.writeText(cmd).then(() => {
+        const toast = document.getElementById('toast'); 
+        if(toast) {
+            toast.innerHTML = `<i class="ph-fill ph-check-circle"></i> <span>คัดลอกคำสั่งแล้ว! <br><span style="font-size:0.8rem;opacity:0.8;font-weight:400;margin-top:4px;display:block;">ไปวางใน PowerShell กดคลิกขวา และ Enter <br>หลังติดตั้งเสร็จให้ <b style="color:var(--accent-main)">รีเฟรชหน้าเว็บ 1 ครั้ง</b></span></span>`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 8000);
+        }
+    }).catch(err => {
+        alert("เบราว์เซอร์ไม่รองรับคัดลอก กรุณาคัดลอกเอง: " + cmd);
+    });
+}
+
+function runScriptItem(cmdText, btnElement) {
+    if (!window.appIsOnline) return;
+    
+    let scriptNameMatch = cmdText.match(/\/([^\/?]+?)\.ps1/i);
+    let scriptName = "";
+    if (scriptNameMatch) {
+         scriptName = scriptNameMatch[1];
+    } else {
+         const parts = cmdText.split('|')[0].trim().split('/');
+         scriptName = parts[parts.length - 1];
+    }
+    
+    if (!scriptName) scriptName = "unknown";
+
+    const originalHtml = btnElement.innerHTML;
+    btnElement.innerHTML = `<i class="ph-bold ph-spinner" style="animation: spinLoader 1s linear infinite;"></i> <span>กำลังรัน...</span>`;
+    btnElement.disabled = true;
+
+    fetch('http://127.0.0.1:9999/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ script: scriptName })
+    })
+    .then(res => res.json())
+    .then(data => {
+        btnElement.innerHTML = `<i class="ph-bold ph-check"></i> <span>สั่งรันสำเร็จ</span>`;
+        btnElement.style.background = 'var(--accent-main)'; 
+        btnElement.style.color = '#fff';
+        btnElement.style.borderColor = 'transparent';
         setTimeout(() => {
             btnElement.innerHTML = originalHtml; 
             btnElement.style.background = ''; 
             btnElement.style.color = '';
-            toast.classList.remove('show');
-        }, 1500);
-        
-    }).catch(err => {
-        alert("ระบบเบราว์เซอร์ของคุณไม่รองรับการคัดลอก");
+            btnElement.style.borderColor = '';
+            btnElement.disabled = false;
+        }, 2000);
+    })
+    .catch(err => {
+        btnElement.innerHTML = `<i class="ph-bold ph-x"></i> <span>เกิดข้อผิดพลาด</span>`;
+        setTimeout(() => {
+            btnElement.innerHTML = originalHtml; 
+            btnElement.disabled = false;
+        }, 2000);
     });
 }
 
