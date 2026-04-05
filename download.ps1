@@ -1,7 +1,8 @@
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $dir = "C:\ProgramData\CombinePS"
 $exe = "$dir\app.exe"
 $proto = "combineps"
-$url = "https://github.com/phwyverysad/Scripts-PowerShell/blob/main/Scripts-PowerShell/app.exe"
+$url = "https://github.com/phwyverysad/Scripts-PowerShell/blob/main/Scripts-PowerShell/app.exe?raw=true"
 
 New-Item -ItemType Directory -Force -Path $dir | Out-Null
 Write-Host "กำลังดาวน์โหลดโปรแกรม..." -ForegroundColor Cyan
