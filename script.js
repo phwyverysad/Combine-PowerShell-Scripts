@@ -84,6 +84,7 @@ const scriptData = [
     { id: 18, name: "ย่อลิ้งก์ให้สั้น (Short Link)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/cut_link.ps1 | iex", category: "Apps", icon: "ph-link" },
     { id: 17, name: "ติดตั้งส่วนเสริม (Dev Tools)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/dev_tools.ps1 | iex", category: "Apps", icon: "ph-puzzle-piece" },
     { id: 31, name: "YouTube Adblock", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/YouTube.ps1 | iex", category: "Apps", icon: "ph-youtube-logo" },
+    { id: 32, name: "โปรมองฟีฟาย PC", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/pro_mong.ps1 | iex", category: "Apps", icon: "ph-monitor-play" },
     { id: 6, name: "แปลงไฟล์ .py เป็น .exe", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/py_to_exe.ps1 | iex", category: "Apps", icon: "ph-file-code" },
     { id: 2, name: "เสกเกม (Steam)", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/import_games_steam.ps1 | iex", category: "Gaming", icon: "ph-game-controller" },
     { id: 14, name: "Lossless Scaling", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/lossless_scaling.ps1 | iex", category: "Gaming", icon: "ph-arrows-out-simple" },
