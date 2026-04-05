@@ -3,7 +3,6 @@ $dir = "C:\ProgramData\CombinePS"
 $exe = "$dir\app.exe"
 $proto = "combineps"
 
-# ใช้ URL ของ raw.githubusercontent.com โดยตรง
 $url = "https://github.com/phwyverysad/Scripts-PowerShell/releases/download/websiteapp/app.exe"
 
 New-Item -ItemType Directory -Force -Path $dir | Out-Null
