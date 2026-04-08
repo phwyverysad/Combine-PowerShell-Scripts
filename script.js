@@ -3,7 +3,6 @@ window.addEventListener('load', () => {
         document.getElementById('page-loader').classList.add('hidden');
         setTimeout(() => {
             document.body.classList.add('loaded');
-            // Wait slightly after fade in before typing starts
             setTimeout(() => {
                 const titleEl = document.getElementById('category-title');
                 if (titleEl && titleEl.innerText === "") {
@@ -13,6 +12,19 @@ window.addEventListener('load', () => {
         }, 100);
     }, 600);
 });
+
+window.toggleStar = function(id, event) {
+    if (event) event.stopPropagation();
+    let starred = JSON.parse(localStorage.getItem('starred_scripts') || '[]');
+    let index = starred.indexOf(id);
+    if (index > -1) {
+        starred.splice(index, 1);
+    } else {
+        starred.push(id);
+    }
+    localStorage.setItem('starred_scripts', JSON.stringify(starred));
+    renderCards();
+};
 
 document.addEventListener('contextmenu', e => e.preventDefault());
 
@@ -61,43 +73,52 @@ document.addEventListener('keydown', e => {
 });
 
 const scriptData = [
+    // --- System ---
     { id: 10, name: "ปรับแต่ง Windows (WinUtil)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/winutil.ps1 | iex", category: "System", icon: "ph-wrench" },
-    { id: 3, name: "PowerPlan (KernelOS)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/Install_powerplan.ps1 | iex", category: "System", icon: "ph-lightning" },
     { id: 9, name: "Clean Ram", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/clean_ram.ps1 | iex", category: "System", icon: "ph-broom" },
+    { id: 13, name: "เมนูทางลัด Power/BIOS", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/menu_options.ps1 | iex", category: "System", icon: "ph-power" },
+    { id: 33, name: "All In One Context Menu", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/setup_contextmenu.ps1 | iex", category: "System", icon: "ph-list-plus" },
     { id: 1, name: "ล็อกไมค์ (Lock Mic)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/lock_mic.ps1 | iex", category: "System", icon: "ph-microphone-slash" },
     { id: 12, name: "สร้างจุดย้อนระบบ (Restore)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/system_restore.ps1 | iex", category: "System", icon: "ph-clock-counter-clockwise" },
-    { id: 13, name: "เมนูทางลัด Power/BIOS", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/menu_options.ps1 | iex", category: "System", icon: "ph-power" },
-    { id: 5, name: "โหลด OS ทับ (Atlas/ReviOS)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/playbook_downloader.ps1 | iex", category: "OS", icon: "ph-hard-drive" },
+
+    // --- OS ---
     { id: 21, name: "เปิดใช้งาน Windows (แท้)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/activate_windowsall.ps1 | iex", category: "OS", icon: "ph-key" },
+    { id: 5, name: "โหลด OS ทับ (Atlas/ReviOS)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/playbook_downloader.ps1 | iex", category: "OS", icon: "ph-hard-drive" },
     { id: 22, name: "เปลี่ยนรุ่น Windows", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/change_windows_edition.ps1 | iex", category: "OS", icon: "ph-swap" },
     { id: 23, name: "เช็คสถานะ Activate", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/check_status_windows.ps1 | iex", category: "OS", icon: "ph-info" },
     { id: 29, name: "ลงวินโดวส์ใหม่", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/windows1011 | iex", category: "OS", icon: "ph-disc" },
     { id: 20, name: "เปิดใช้งาน Microsoft 365", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/activate_365.ps1 | iex", category: "OS", icon: "ph-briefcase" },
+
+    // --- Apps ---
+    { id: 26, name: "Web Browser", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/browser.ps1 | iex", category: "Apps", icon: "ph-globe-hemisphere-west" },
+    { id: 8, name: "Discord 3 ตัว", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/rwm_discord.ps1 | iex", category: "Apps", icon: "ph-discord-logo" },
+    { id: 31, name: "YouTube Adblock", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/YouTube.ps1 | iex", category: "Apps", icon: "ph-youtube-logo" },
+    { id: 18, name: "ย่อลิ้งก์ให้สั้น (Short Link)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/cut_link.ps1 | iex", category: "Apps", icon: "ph-link" },
+    { id: 19, name: "IDM (โหลดไว)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/idm_build.ps1 | iex", category: "Apps", icon: "ph-download-simple" },
+    { id: 11, name: "ฝากไฟล์ & แชร์ไฟล์", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/Upload_Share_Files.ps1 | iex", category: "Apps", icon: "ph-cloud-arrow-up" },
     { id: 16, name: "จัดการไดรเวอร์ (IObit)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/IObit_Driver_Booster_Pro.ps1 | iex", category: "Apps", icon: "ph-cpu" },
     { id: 15, name: "Revo Uninstaller Pro", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/revo_uninstaller_pro.ps1 | iex", category: "Apps", icon: "ph-trash" },
-    { id: 19, name: "IDM (โหลดไว)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/idm_build.ps1 | iex", category: "Apps", icon: "ph-download-simple" },
-    { id: 8, name: "Discord 3 ตัว", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/rwm_discord.ps1 | iex", category: "Apps", icon: "ph-discord-logo" },
-    { id: 26, name: "Web Browser", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/browser.ps1 | iex", category: "Apps", icon: "ph-globe-hemisphere-west" },
     { id: 27, name: "X-Mouse Button Control", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/X-Mouse_Button_Control.ps1 | iex", category: "Apps", icon: "ph-mouse" },
     { id: 28, name: "Partition Wizard Pro", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/MiniTool_Partition_Wizard_Pro.ps1 | iex", category: "Apps", icon: "ph-hard-drives" },
-    { id: 11, name: "ฝากไฟล์ & แชร์ไฟล์", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/Upload_Share_Files.ps1 | iex", category: "Apps", icon: "ph-cloud-arrow-up" },
-    { id: 18, name: "ย่อลิ้งก์ให้สั้น (Short Link)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/cut_link.ps1 | iex", category: "Apps", icon: "ph-link" },
     { id: 17, name: "ติดตั้งส่วนเสริม (Dev Tools)", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/dev_tools.ps1 | iex", category: "Apps", icon: "ph-puzzle-piece" },
-    { id: 31, name: "YouTube Adblock", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/YouTube.ps1 | iex", category: "Apps", icon: "ph-youtube-logo" },
     { id: 32, name: "โปรมองฟีฟาย PC", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/pro_mong.ps1 | iex", category: "Apps", icon: "ph-monitor-play" },
     { id: 6, name: "แปลงไฟล์ .py เป็น .exe", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/py_to_exe.ps1 | iex", category: "Apps", icon: "ph-file-code" },
-    { id: 2, name: "เสกเกม (Steam)", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/import_games_steam.ps1 | iex", category: "Gaming", icon: "ph-game-controller" },
+
+    // --- Gaming ---
     { id: 14, name: "Lossless Scaling", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/lossless_scaling.ps1 | iex", category: "Gaming", icon: "ph-arrows-out-simple" },
-    { id: 7, name: "Minecraft for Windows", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/minecraft_for_windows.ps1 | iex", category: "Gaming", icon: "ph-cube" },
     { id: 4, name: "Spotify Premium", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/spotify_premium.ps1 | iex", category: "Gaming", icon: "ph-spotify-logo" },
-    { id: 30, name: "Remove Windows Defender", cmd: "irm https://gist.github.com/phwyverysad/719da2821717ab9b6ec83e1cca2a0298/raw/e88ce7ded6eeb52a488ff5632a5e9e9dee73da68/RemoveWindowsDefender.ps1 | iex", category: "Security", icon: "ph-shield-slash" },
-    { id: 24, name: "Avast Premium", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/avast_premium_security.ps1 | iex", category: "Security", icon: "ph-shield-check" },
+    { id: 2, name: "เสกเกม (Steam)", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/import_games_steam.ps1 | iex", category: "Gaming", icon: "ph-game-controller" },
+    { id: 7, name: "Minecraft for Windows", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/minecraft_for_windows.ps1 | iex", category: "Gaming", icon: "ph-cube" },
+
+    // --- Security ---
     { id: 25, name: "Malwarebytes Premium", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/malwarebytes_premium.ps1 | iex", category: "Security", icon: "ph-bug-beetle" },
-    { id: 33, name: "All In One Context Menu", cmd: "irm https://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/setup_contextmenu.ps1 | iex", category: "System", icon: "ph-list-plus" }
+    { id: 30, name: "Remove Windows Defender", cmd: "irm https://gist.github.com/phwyverysad/719da2821717ab9b6ec83e1cca2a0298/raw/e88ce7ded6eeb52a488ff5632a5e9e9dee73da68/RemoveWindowsDefender.ps1 | iex", category: "Security", icon: "ph-shield-slash" },
+    { id: 24, name: "Avast Premium", cmd: "irm http://raw.githubusercontent.com/phwyverysad/-/refs/heads/main/powershell/avast_premium_security.ps1 | iex", category: "Security", icon: "ph-shield-check" }
 ];
 
 const categories = [
     { id: "All", name: "หน้าแรก (ทั้งหมด)", icon: "ph-squares-four" },
+    { id: "Favorites", name: "รายการโปรด", icon: "ph-star" },
     { id: "System", name: "ปรับแต่งระบบ", icon: "ph-sliders-horizontal" },
     { id: "OS", name: "จัดการ Windows", icon: "ph-windows-logo" },
     { id: "Apps", name: "แอป & เครื่องมือ", icon: "ph-app-window" },
@@ -244,9 +265,18 @@ function renderCards() {
     const grid = document.getElementById('card-grid'); 
     grid.innerHTML = '';
     
+    let starredScripts = JSON.parse(localStorage.getItem('starred_scripts') || '[]');
+    
     let filteredData = searchTerm !== "" 
         ? scriptData.filter(i => i.name.toLowerCase().includes(searchTerm) || i.category.toLowerCase().includes(searchTerm))
-        : currentCategory !== "All" ? scriptData.filter(i => i.category === currentCategory) : scriptData;
+        : currentCategory === "Favorites" ? scriptData.filter(i => starredScripts.includes(i.id))
+        : currentCategory !== "All" ? scriptData.filter(i => i.category === currentCategory) : [...scriptData];
+        
+    filteredData.sort((a, b) => {
+        let aStar = starredScripts.includes(a.id) ? 1 : 0;
+        let bStar = starredScripts.includes(b.id) ? 1 : 0;
+        return bStar - aStar; 
+    });
         
     document.getElementById('item-count').innerText = `พบ ${filteredData.length} รายการ`;
     
@@ -268,6 +298,9 @@ function renderCards() {
             <div class="card-header">
                 <div class="card-icon"><i class="ph ${item.icon}"></i></div>
                 <div class="card-title">${item.name}</div>
+                <button class="star-btn ${starredScripts.includes(item.id) ? 'active' : ''}" onclick="toggleStar(${item.id}, event)" title="${starredScripts.includes(item.id) ? 'เอาออกจากรายการโปรด' : 'เพิ่มลงรายการโปรด'}">
+                    <i class="${starredScripts.includes(item.id) ? 'ph-fill' : 'ph'} ph-star"></i>
+                </button>
             </div>
             <div class="code-box" id="code-${item.id}">${item.cmd}</div>
             <button class="copy-btn" onclick="copyToClipboard('${item.cmd}', this, 'code-${item.id}')">
