@@ -104,7 +104,11 @@ const scriptData = [
     { id: 28, name: "Minecraft for Windows", cmd: "irm raw.githubusercontent.com/phwyverysad/Combine-PowerShell-Scripts/refs/heads/main/powershell/minecraft_for_windows.ps1 | iex", category: "Gaming", icon: "ph-cube" },
     { id: 29, name: "Malwarebytes Premium", cmd: "irm raw.githubusercontent.com/phwyverysad/Combine-PowerShell-Scripts/refs/heads/main/powershell/malwarebytes_premium.ps1 | iex", category: "Security", icon: "ph-bug-beetle" },
     { id: 30, name: "Remove Windows Defender", cmd: "irm raw.githubusercontent.com/phwyverysad/Combine-PowerShell-Scripts/refs/heads/main/powershell/remove_windows_defender.ps1 | iex", category: "Security", icon: "ph-shield-slash" },
-    { id: 31, name: "Avast Premium", cmd: "irm raw.githubusercontent.com/phwyverysad/Combine-PowerShell-Scripts/refs/heads/main/powershell/avast_premium_security.ps1 | iex", category: "Security", icon: "ph-shield-check" }
+    { id: 31, name: "Avast Premium", cmd: "irm raw.githubusercontent.com/phwyverysad/Combine-PowerShell-Scripts/refs/heads/main/powershell/avast_premium_security.ps1 | iex", category: "Security", icon: "ph-shield-check" },
+    { id: 32, name: "VMware Workstation Pro", cmd: "irm raw.githubusercontent.com/phwyverysad/Combine-PowerShell-Scripts/refs/heads/main/powershell/vmware_workstation_pro.ps1 | iex", category: "Apps", icon: "ph-desktop" },
+    { id: 33, name: "Adobe Photoshop 2026", cmd: "irm raw.githubusercontent.com/phwyverysad/Combine-PowerShell-Scripts/refs/heads/main/powershell/adobe_photoshop_2026.ps1 | iex", category: "Apps", icon: "ph-image" },
+    { id: 34, name: "Adobe Premiere Pro 2026", cmd: "irm raw.githubusercontent.com/phwyverysad/Combine-PowerShell-Scripts/refs/heads/main/powershell/adobe_premiere_pro_2026.ps1 | iex", category: "Apps", icon: "ph-video-camera" },
+    { id: 35, name: "Driver Easy Pro", cmd: "irm raw.githubusercontent.com/phwyverysad/Combine-PowerShell-Scripts/refs/heads/main/powershell/driver_easy_pro.ps1 | iex", category: "Apps", icon: "ph-wrench" }
 ];
 
 const categories = [
